@@ -7,9 +7,12 @@ using System.Windows.Forms;
 namespace Organizer {
     public static class Config {
 
+        public static bool pause = false;
+
         public static Form1 form;
         public static Button btn;
         public static bool attente = false;
+        public static int attenteId = 0;
 
         public static List<Fenetre> fenetres = new List<Fenetre>();
         public static List<Fenetre> checks = new List<Fenetre>();
@@ -23,9 +26,11 @@ namespace Organizer {
             } else if (attente) {
                 btn.Text = "Aucun raccourci";
                 btn = newBtn;
+                raccourcis[attenteId] = Keys.None;
                 btn.Text = "Appuyez sur une touche";
             } else {
                 attente = true;
+                attenteId = int.Parse(newBtn.Name.Replace("btnfen", ""));
                 btn = newBtn;
                 btn.Text = "Appuyez sur une touche";
             }
@@ -33,6 +38,7 @@ namespace Organizer {
 
         public static void outBtn(Button oldBtn) {
             if (oldBtn.Equals(btn)) {
+                raccourcis[attenteId] = Keys.None;
                 attente = false;
                 btn.Text = "Aucun raccourci";
                 btn = null;

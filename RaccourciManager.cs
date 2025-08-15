@@ -19,7 +19,7 @@ namespace Organizer {
         }
 
         private void GlobalHook_KeyDown(object sender, KeyEventArgs e) {
-            if (Config.checks.Count == 0) return;
+            if (Config.checks.Count == 0 || Config.pause) return;
 
             if (Config.raccourcis.Contains(e.KeyCode)) {
                 int getIndex = Config.raccourcis.IndexOf(e.KeyCode);

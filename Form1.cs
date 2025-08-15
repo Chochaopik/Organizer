@@ -54,6 +54,10 @@ namespace Organizer {
             Config.form = this;
             Config.chargerRaccourcis();
             refreshList();
+            Visible = true;
+            ShowInTaskbar = true;
+            Opacity = 1;
+            Activate();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -63,6 +67,7 @@ namespace Organizer {
                 Config.btn.Text = keyData.ToString();
                 Config.btn = null;
                 Config.attente = false;
+                Config.attenteId = -1;
                 Config.sauvegarderRaccourcis();
 
                 return true;
@@ -191,6 +196,36 @@ namespace Organizer {
             if (controles.Length > 0 && controles[0] is Button btn) {
                 btn.Text = texte;
             }
+        }
+
+        private void notifyIcon1_Click(object sender, EventArgs e) {
+            if ((e as MouseEventArgs).Button == MouseButtons.Left) {
+                if (Visible) {
+                    Visible = false;
+                    Opacity = 0;
+                    ShowInTaskbar = false;
+                } else {
+                    Visible = true;
+                    ShowInTaskbar = true;
+                    Opacity = 1;
+                    Activate();
+                }
+            }
+        }
+
+        private void pauseToolStripMenuItem_Click(object sender, EventArgs e) {
+            Config.pause = !Config.pause;
+            if (Config.pause) {
+                notifyIcon1.Text = "Organizer - En pause";
+                notifyIcon1.Icon = Properties.Resources.icon_disable;
+            } else {
+                notifyIcon1.Text = "Organizer - En cours d'excution";
+                notifyIcon1.Icon = Properties.Resources.icon;
+            }
+        }
+
+        private void quitterToolStripMenuItem_Click(object sender, EventArgs e) {
+            Application.Exit();
         }
     }
 }
