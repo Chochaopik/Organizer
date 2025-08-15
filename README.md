@@ -14,3 +14,11 @@ Vous cochez les fenêtres voulu dans l'ordre voulu :
 Vous appuyez sur les boutons et la touche que vous voulez attribuer :
 
 <img width="382" height="499" alt="image" src="https://github.com/user-attachments/assets/4e9a1855-6c86-446e-9254-389cf3957db5" />
+
+Je ne m'amuserais pas à maj cette version, des trucs du genre sortirons et marcherons bien mieux.
+Je ferais qu'une mise à jour pour mettre en pause/réactiver
+
+Pour annuler un raccourci vous recliquez sur le bouton ou vous changez d'onglet.
+Pour cacher l'application un clique gauche sur son icône à côté de l'heure.
+
+Version Windows uniquement je ferais pas de version autre.
