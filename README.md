@@ -1,3 +1,5 @@
+## ATTENTION Malwarebyte produit un faux positif sur l'application dû à la méthode pour mettre la fenêtre au premier plan, une méthode qui contourne les restrictions W11 !
+
 # Organizer
 
 Organizer est un petit utilitaire conçu pour faciliter la navigation rapide entre plusieurs fenêtres — que ce soit pour le travail, le gaming, ou tout autre usage multitâche.
