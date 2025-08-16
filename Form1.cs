@@ -61,13 +61,30 @@ namespace Organizer {
 
         private const int SW_RESTORE = 9;
 
+        [DllImport("kernel32.dll")]
+        static extern uint GetCurrentThreadId();
+
+        [DllImport("user32.dll")]
+        static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
         public void BringToFront(IntPtr hWnd) {
             if (IsIconic(hWnd)) ShowWindow(hWnd, SW_RESTORE);
 
-            SetForegroundWindow(hWnd);
-        }
+            uint threadId = GetWindowThreadProcessId(GetForegroundWindow(), out _);
+            uint targetThreadId = GetWindowThreadProcessId(hWnd, out _);
+            uint currentThreadId = GetCurrentThreadId();
 
-        private static IntPtr hookID = IntPtr.Zero;
+            AttachThreadInput(currentThreadId, targetThreadId, true);
+            AttachThreadInput(threadId, targetThreadId, true);
+
+            SetForegroundWindow(hWnd);
+
+            AttachThreadInput(currentThreadId, targetThreadId, false);
+            AttachThreadInput(threadId, targetThreadId, false);
+        }
 
         public void Start() {
             proc = HookCallback;
