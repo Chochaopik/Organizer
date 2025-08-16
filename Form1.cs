@@ -1,5 +1,4 @@
-﻿using Gma.System.MouseKeyHook;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -67,6 +66,8 @@ namespace Organizer {
 
             SetForegroundWindow(hWnd);
         }
+
+        private static IntPtr hookID = IntPtr.Zero;
 
         public void Start() {
             proc = HookCallback;
@@ -288,11 +289,12 @@ namespace Organizer {
         }
 
         private void quitterToolStripMenuItem_Click(object sender, EventArgs e) {
+            Stop();
             Application.Exit();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
-            
+            Stop();
         }
     }
 }
