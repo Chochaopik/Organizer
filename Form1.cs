@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gma.System.MouseKeyHook;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -12,7 +13,7 @@ using static System.Windows.Forms.ListView;
 namespace Organizer {
     public partial class Form1 : Form {
 
-        #region Gestion fenetres
+        #region Gestion fenetres & Hook clavier
         [DllImport("user32.dll")]
         private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
         private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -33,6 +34,27 @@ namespace Organizer {
             return sb.ToString();
         }
 
+
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN = 0x0100;
+
+        private IntPtr hookId = IntPtr.Zero;
+        private LowLevelKeyboardProc proc;
+
+        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll")]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
         [DllImport("user32.dll")]
@@ -45,12 +67,51 @@ namespace Organizer {
 
             SetForegroundWindow(hWnd);
         }
-        #endregion
 
-        RaccourciManager racMan = new RaccourciManager();
+        public void Start() {
+            proc = HookCallback;
+            using (Process curProcess = Process.GetCurrentProcess())
+            using (ProcessModule curModule = curProcess.MainModule) {
+                hookId = SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        private int indexActuel = 0;
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN) {
+                int vkCode = Marshal.ReadInt32(lParam);
+                Keys key = (Keys)vkCode;
+
+                if (Config.checks.Count != 0 || !Config.pause) {
+                    if (Config.raccourcis.Contains(key)) {
+                        int getIndex = Config.raccourcis.IndexOf(key);
+                        if (getIndex == 16) {
+                            indexActuel--;
+                            if (indexActuel < 0) indexActuel = Config.checks.Count - 1;
+                        } else if (getIndex == 17) {
+                            indexActuel++;
+                            if (indexActuel > Config.checks.Count - 1) indexActuel = 0;
+                        } else if (getIndex < 16) {
+                            if (getIndex > Config.checks.Count - 1) return CallNextHookEx(hookId, nCode, wParam, lParam);
+                            indexActuel = getIndex;
+                        } else {
+                            return CallNextHookEx(hookId, nCode, wParam, lParam);
+                        }
+                        Config.form.BringToFront(Config.checks[indexActuel].hWnd);
+                    }
+                }
+            }
+            return CallNextHookEx(hookId, nCode, wParam, lParam);
+        }
+
+        public void Stop() {
+            UnhookWindowsHookEx(hookId);
+        }
+        #endregion
 
         public Form1() {
             InitializeComponent();
+            Icon = Properties.Resources.icon;
             Config.form = this;
             Config.chargerRaccourcis();
             refreshList();
@@ -58,6 +119,8 @@ namespace Organizer {
             ShowInTaskbar = true;
             Opacity = 1;
             Activate();
+
+            Start();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -226,6 +289,10 @@ namespace Organizer {
 
         private void quitterToolStripMenuItem_Click(object sender, EventArgs e) {
             Application.Exit();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
+            
         }
     }
 }

@@ -21,16 +21,23 @@ namespace Organizer {
         private static string fichierSave = Application.StartupPath + "/keys.json";
 
         public static void putBtn(Button newBtn) {
+            attenteId = int.Parse(newBtn.Name.Replace("btnfen", ""))-1;
             if (newBtn == btn) {
                 outBtn(btn);
             } else if (attente) {
                 btn.Text = "Aucun raccourci";
                 btn = newBtn;
                 raccourcis[attenteId] = Keys.None;
+                Config.sauvegarderRaccourcis();
+                btn.Text = "Appuyez sur une touche";
+            } else if (raccourcis[attenteId] != Keys.None) {
+                attente = true;
+                raccourcis[attenteId] = Keys.None;
+                Config.sauvegarderRaccourcis();
+                btn = newBtn;
                 btn.Text = "Appuyez sur une touche";
             } else {
                 attente = true;
-                attenteId = int.Parse(newBtn.Name.Replace("btnfen", ""));
                 btn = newBtn;
                 btn.Text = "Appuyez sur une touche";
             }
@@ -39,6 +46,7 @@ namespace Organizer {
         public static void outBtn(Button oldBtn) {
             if (oldBtn.Equals(btn)) {
                 raccourcis[attenteId] = Keys.None;
+                Config.sauvegarderRaccourcis();
                 attente = false;
                 btn.Text = "Aucun raccourci";
                 btn = null;
