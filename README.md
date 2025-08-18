@@ -18,9 +18,9 @@ Et 2 raccourcis globaux pour passer à la fenêtre suivante ou précédente.
 <img width="382" height="499" alt="image" src="https://github.com/user-attachments/assets/4e9a1855-6c86-446e-9254-389cf3957db5" />
 
 # Infos utiles
-Pour annuler un raccourci, cliquez à nouveau sur le bouton ou changez d’onglet.
-Pour masquer l’application, faites un clic gauche sur son icône dans la barre des tâches (près de l’heure).
-Pour mettre en pause, faites un clic droit sur l’icône dans la barre des tâches → sélectionnez Pause. L’icône devient rouge pendant la pause.
+• Pour annuler un raccourci, cliquez à nouveau sur le bouton ou changez d’onglet.
+• Pour masquer l’application, faites un clic gauche sur son icône dans la barre des tâches (près de l’heure).
+• Pour mettre en pause, faites un clic droit sur l’icône dans la barre des tâches → sélectionnez Pause. L’icône devient rouge pendant la pause.
 
 ---
 
